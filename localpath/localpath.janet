@@ -10,6 +10,8 @@
 
 # https://en.wikipedia.org/wiki/Path_(computing)
 
+# https://en.wikipedia.org/wiki/Canonicalization
+
 (defn abspath?
   [path &opt doze?]
   (default doze? (= :windows (os/which)))
