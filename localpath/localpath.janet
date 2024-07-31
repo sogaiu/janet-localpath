@@ -368,3 +368,43 @@
 
   )
 
+########################################################################
+
+(defn relpath
+  [source target &opt doze?]
+  (default doze? (= :windows (os/which)))
+  (def source-parts (parts (abspath source doze?) doze?))
+  (def target-parts (parts (abspath target doze?) doze?))
+  (def same-parts
+    (length (take-until identity
+                        (map not= source-parts target-parts))))
+  (def up-walk
+    (array/new-filled (- (length source-parts) same-parts)
+                      ".."))
+  (def down-walk (tuple/slice target-parts same-parts))
+  #
+  (join ;up-walk ;down-walk doze?))
+
+(comment
+
+  (relpath "/home/bob/.local/lib/janet"
+           "/home/bob/.local/include"
+           false)
+  # =>
+  "../../include"
+
+  (relpath `C:\WINDOWS\SYSTEM32`
+           `C:\`
+           true)
+  # =>
+  `..\..\`
+
+  # XXX: why three sets of dots?
+  (relpath "/usr/local/lib/janet/"
+           "/usr/local/include"
+           false)
+  # =>
+  "../../../include"
+
+  )
+
