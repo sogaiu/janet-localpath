@@ -373,8 +373,8 @@
 (defn relpath
   [source target &opt doze?]
   (default doze? (= :windows (os/which)))
-  (def source-parts (parts (abspath source doze?) doze?))
-  (def target-parts (parts (abspath target doze?) doze?))
+  (def source-parts (filter next (parts (abspath source doze?) doze?)))
+  (def target-parts (filter next (parts (abspath target doze?) doze?)))
   (def same-parts
     (length (take-until identity
                         (map not= source-parts target-parts))))
@@ -397,14 +397,13 @@
            `C:\`
            true)
   # =>
-  `..\..\`
+  `..\..`
 
-  # XXX: why three sets of dots?
   (relpath "/usr/local/lib/janet/"
            "/usr/local/include"
            false)
   # =>
-  "../../../include"
+  "../../include"
 
   )
 
