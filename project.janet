@@ -4,5 +4,5 @@
   :repo "git+https://github.com/sogaiu/janet-localpath.git")
 
 (declare-source
-  :source @["localpath.janet"])
+  :source @["localpath"])
 

@@ -13,5 +13,5 @@
    :paths [["jtfm.janet" "bin/"]]}]
 
  :sources
- [{:items ["localpath.janet"]}]}
+ [{:items ["localpath"]}]}
 
