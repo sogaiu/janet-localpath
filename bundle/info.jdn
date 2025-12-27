@@ -1,0 +1,17 @@
+{:name "janet-localpath"
+ :url "https://github.com/sogaiu/janet-localpath"
+ :repo "git+https://github.com/sogaiu/janet-localpath"
+
+ :vendored
+ [{:name "some-bundle-bits"
+   :url "https://github.com/sogaiu/some-bundle-bits"
+   :tag "b9059643baa2d0a822f915e9f1b6cd80308d23c4"
+   :paths [["sbb.janet" "bundle/"]]}
+  {:name "jtfm"
+   :url "https://github.com/sogaiu/jtfm"
+   :tag "b383d182958875b5aa680bde391f41194843f2a2"
+   :paths [["jtfm.janet" "bin/"]]}]
+
+ :sources
+ [{:items ["localpath"]}]}
+
