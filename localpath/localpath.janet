@@ -12,10 +12,15 @@
 
 # https://en.wikipedia.org/wiki/Canonicalization
 
+(defn uses-bs?
+  []
+  (def os (os/which))
+  (or (= :windows os) (= :mingw os)))
+
 (defn abspath?
-  [path &opt doze?]
-  (default doze? (= :windows (os/which)))
-  (if doze?
+  [path &opt bs-land?]
+  (default bs-land? (uses-bs?))
+  (if bs-land?
     # https://stackoverflow.com/a/23968430
     # https://learn.microsoft.com/en-us/dotnet/standard/io/file-path-formats
     (truthy? (peg/match ~(sequence :a `:\`) path))
@@ -148,11 +153,11 @@
   )
 
 (defn normalize
-  [path &opt doze?]
-  (default doze? (= :windows (os/which)))
+  [path &opt bs-land?]
+  (default bs-land? (uses-bs?))
   (def accum @[])
   (def parts
-    (peg/match (if doze?
+    (peg/match (if bs-land?
                  w32-grammar
                  posix-grammar)
                path))
@@ -176,7 +181,7 @@
         (array/push accum x))))
   (def ret
     (string (or lead "")
-            (string/join accum (if doze? `\` "/"))))
+            (string/join accum (if bs-land? `\` "/"))))
   #
   (if (empty? ret)
     "."
@@ -312,14 +317,14 @@
 ########################################################################
 
 (defn abspath
-  [path &opt doze?]
-  (default doze? (= :windows (os/which)))
-  (if (abspath? path doze?)
-    (normalize path doze?)
+  [path &opt bs-land?]
+  (default bs-land? (uses-bs?))
+  (if (abspath? path bs-land?)
+    (normalize path bs-land?)
     # dynamic variable useful for testing
     (join (or (dyn :localpath-cwd) (os/cwd))
           path
-          doze?)))
+          bs-land?)))
 
 (comment
 
@@ -338,9 +343,9 @@
 ########################################################################
 
 (defn parts
-  [path &opt doze?]
-  (default doze? (= :windows (os/which)))
-  (string/split (if doze? `\` "/")
+  [path &opt bs-land?]
+  (default bs-land? (uses-bs?))
+  (string/split (if bs-land? `\` "/")
                 path))
 
 (comment
@@ -371,10 +376,12 @@
 ########################################################################
 
 (defn relpath
-  [source target &opt doze?]
-  (default doze? (= :windows (os/which)))
-  (def source-parts (filter next (parts (abspath source doze?) doze?)))
-  (def target-parts (filter next (parts (abspath target doze?) doze?)))
+  [source target &opt bs-land?]
+  (default bs-land? (uses-bs?))
+  (def source-parts
+    (filter next (parts (abspath source bs-land?) bs-land?)))
+  (def target-parts
+    (filter next (parts (abspath target bs-land?) bs-land?)))
   (def same-parts
     (length (take-until identity
                         (map not= source-parts target-parts))))
@@ -383,7 +390,7 @@
                       ".."))
   (def down-walk (tuple/slice target-parts same-parts))
   #
-  (join ;up-walk ;down-walk doze?))
+  (join ;up-walk ;down-walk bs-land?))
 
 (comment
 
